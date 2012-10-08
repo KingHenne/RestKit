@@ -639,7 +639,12 @@ BOOL RKObjectIsValueEqualToValue(id sourceValue, id destinationValue) {
     RKObjectAttributeMapping *attributeMapping = [self.objectMapping attributeMappingForKeyOfNestedDictionary];
     if (attributeMapping) {
         RKLogDebug(@"Found nested mapping definition to attribute '%@'", attributeMapping.destinationKeyPath);
-        id attributeValue = [[self.sourceObject allKeys] lastObject];
+		id attributeValue;
+		if ([self.sourceObject respondsToSelector:@selector(allKeys)]) {
+			attributeValue = [[self.sourceObject allKeys] lastObject];
+		} else {
+			attributeValue = self.sourceObject;
+		}
         if (attributeValue) {
             RKLogDebug(@"Found nesting value of '%@' for attribute '%@'", attributeValue, attributeMapping.destinationKeyPath);
             _nestedAttributeSubstitution = [[NSDictionary alloc] initWithObjectsAndKeys:attributeValue, attributeMapping.destinationKeyPath, nil];
